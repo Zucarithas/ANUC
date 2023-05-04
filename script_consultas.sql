@@ -6,7 +6,7 @@
 SELECT * FROM vereda WHERE CAST(area AS DECIMAL(10,2)) > 209;
 
 /*Consulta 2:
-  Seleccionar todas las personas que no o si están afiliadas:*/
+  Seleccionar todas las personas que no están afiliadas:*/
 SELECT * FROM persona WHERE afiliado = 'no';
 
 /*Consulta 3:
@@ -17,7 +17,10 @@ GROUP BY rubro;
 
 /*Consulta 4:
   Obtener la cantidad de personas por vereda:*/
-
+SELECT v.nombre AS vereda, COUNT(*) AS cantidad_personas
+FROM persona p
+INNER JOIN vereda v ON p.id_vereda = v.idVereda
+GROUP BY v.nombre;
 
 /*Consulta 5:
   Obtener la cantidad de fincas por persona:*/
@@ -38,7 +41,7 @@ FROM vereda v, proyecto pr, proyecto_vereda pv
 WHERE v.idVereda = pv.id_vereda AND pv.id_proyecto = pr.idProyecto AND pr.estado = 'Activo';
 
 /*Consulta 8:
-  */
+  Mostrar la lista de todas las veredas que tienen tierra cultivable con un área mayor a 100 hectáreas:*/
 SELECT v.nombre AS vereda, t.Tierra AS tierra_cultivable, t.Tierra
 FROM vereda v, tierra t
 WHERE v.idVereda = t.id_vereda AND t.sector = 'Cultivo' AND t.Tierra > '100';
@@ -50,7 +53,7 @@ FROM persona p, finca f
 WHERE p.idPersona = f.id_persona;
 
 /*Consulta 10:
-  */
+  Mostrar la lista de todas las personas que tienen un proyecto en estado 'en proceso' y su respectiva información del proyecto:*/
 SELECT p.nombre, p.apellido, pr.estado, pr.fechaInicio, pr.rubro, pr.aporte, pr.observaciones
 FROM persona p, proyecto pr
 WHERE p.idPersona = pr.idPersona AND pr.estado = 'en proceso';
@@ -121,7 +124,8 @@ JOIN vereda ON proyecto_vereda.id_vereda = vereda.idVereda
 WHERE vereda.idVereda IN
 (SELECT proyecto_vereda.id_vereda FROM finca GROUP BY proyecto_vereda.id_vereda HAVING COUNT(*) > 1);
 
-/*Obtener el nombre completo de las personas y el nombre de la vereda donde residen, de aquellas personas que tengan una finca registrada en la tabla finca y cuya área sea mayor a 150:*/
+/*Consulta 9:
+  Obtener el nombre completo de las personas y el nombre de la vereda donde residen, de aquellas personas que tengan una finca registrada en la tabla finca y cuya área sea mayor a 150:*/
 SELECT CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo, v.nombre AS nombre_vereda
 FROM persona p
 JOIN finca f ON f.id_persona = p.idPersona
